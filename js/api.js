@@ -15,7 +15,7 @@ async function request(payload){
     const result=await new Promise((resolve,reject)=>{
       const cleanup=()=>{clearTimeout(timer);removeEventListener('message',onMessage)};
       const onMessage=event=>{
-        if(event.source!==frame.contentWindow||!trustedBridgeOrigin(event.origin)||event.data?.requestId!==requestId)return;
+        if(!trustedBridgeOrigin(event.origin)||event.data?.requestId!==requestId)return;
         cleanup();resolve(event.data.payload);
       };
       const timer=setTimeout(()=>{cleanup();reject(new ApiError('Household cloud is temporarily unavailable. Please try again. Your local data is safe.','NETWORK_ERROR'))},45000);
