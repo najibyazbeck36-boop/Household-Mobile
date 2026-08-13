@@ -1,0 +1,11 @@
+export const DB_NAME='household-mobile'; export const DB_VERSION=1;
+export const STORES=['metadata','members','accounts','categories','financial_entries','outbox','conflicts'];
+let opening;
+export function openDb(){if(opening)return opening;opening=new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{const db=req.result;for(const name of STORES){if(db.objectStoreNames.contains(name))continue;const store=db.createObjectStore(name,{keyPath:name==='metadata'?'key':name==='outbox'?'changeId':'id'});if(name==='outbox')store.createIndex('createdAt','createdAt');if(name==='conflicts')store.createIndex('resolvedAt','resolvedAt')}};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)});return opening}
+export async function transaction(names,mode,work){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(names,mode);let value;try{value=work(tx)}catch(e){tx.abort();reject(e);return}tx.oncomplete=()=>resolve(value);tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('Local transaction aborted'))})}
+const request=req=>new Promise((resolve,reject)=>{req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)});
+export async function get(store,key){const db=await openDb();return request(db.transaction(store).objectStore(store).get(key))}
+export async function all(store){const db=await openDb();return request(db.transaction(store).objectStore(store).getAll())}
+export async function setMeta(key,value){return transaction(['metadata'],'readwrite',tx=>tx.objectStore('metadata').put({key,value}))}
+export async function getMeta(key,fallback=null){return (await get('metadata',key))?.value??fallback}
+export async function bootstrapCommit(data){return transaction(STORES.filter(s=>!['outbox','conflicts'].includes(s)),'readwrite',tx=>{for(const [store,key] of [['members','members'],['accounts','accounts'],['categories','categories'],['financial_entries','financialEntries']]){const os=tx.objectStore(store);os.clear();for(const row of data[key]||[])os.put(row)}const meta=tx.objectStore('metadata');meta.put({key:'household_id',value:data.householdId});meta.put({key:'last_server_revision',value:data.currentRevision});meta.put({key:'last_sync_at',value:new Date().toISOString()});meta.put({key:'last_sync_error',value:null})})}

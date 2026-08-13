@@ -1,0 +1,5 @@
+import{post}from'./api.js';import{bootstrapCommit,getMeta,setMeta}from'./db.js';
+export async function ensureDeviceId(){let id=await getMeta('device_id');if(!id){id=crypto.randomUUID();await setMeta('device_id',id)}return id}
+export async function config(){return{deviceId:await ensureDeviceId(),deviceName:await getMeta('device_name'),deviceToken:await getMeta('device_token'),defaultMemberId:await getMeta('default_member_id'),householdId:await getMeta('household_id')}}
+export async function pair(deviceName,pairingCode){const deviceId=await ensureDeviceId();const result=await post({action:'pairDevice',pairingCode:pairingCode.trim().toUpperCase(),deviceId,deviceName:deviceName.trim()});await setMeta('device_name',deviceName.trim());await setMeta('device_token',result.deviceToken);try{const snapshot=await post({action:'bootstrap',deviceId,deviceToken:result.deviceToken});await bootstrapCommit(snapshot);return snapshot}catch(error){await setMeta('device_token',null);throw error}}
+export async function setDefaultMember(id){await setMeta('default_member_id',id||null)}

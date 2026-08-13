@@ -1,0 +1,5 @@
+{
+  "name":"Household","short_name":"Household","description":"Offline-first shared household finances",
+  "start_url":"./","scope":"./","display":"standalone","background_color":"#f4f7fb","theme_color":"#172238",
+  "icons":[{"src":"./icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
