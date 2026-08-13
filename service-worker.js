@@ -1,4 +1,4 @@
-const VERSION='household-mobile-v2';
+const VERSION='household-mobile-v3';
 const SHELL=['./','./index.html','./manifest.webmanifest','./css/app.css','./icons/icon.svg','./js/app.js','./js/api.js','./js/auth.js','./js/db.js','./js/sync.js','./js/models.js','./js/views.js'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(VERSION).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==VERSION).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
