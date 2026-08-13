@@ -5,7 +5,7 @@ const FRESH_DEVICE_KEY='pairing_requires_new_device_id';
 
 export function createPairingService({postRetry=post,postPair=postOnce,readMeta=getMeta,writeMeta=setMeta,removeMeta=deleteMeta,commitBootstrap=bootstrapCommit,randomUUID=()=>crypto.randomUUID()}={}){
   async function ensureDeviceId(){let id=await readMeta('device_id');if(!id){id=randomUUID();await writeMeta('device_id',id)}return id}
-  async function invalidateDeviceToken(){await removeMeta('device_token');await writeMeta(FRESH_DEVICE_KEY,true)}
+  async function invalidateDeviceToken(){await removeMeta('device_token')}
   async function deviceIdForPairing(){if(await readMeta(FRESH_DEVICE_KEY,false)){const id=randomUUID();await writeMeta('device_id',id);await removeMeta(FRESH_DEVICE_KEY);return id}return ensureDeviceId()}
   async function config(){return{deviceId:await ensureDeviceId(),deviceName:await readMeta('device_name'),deviceToken:await readMeta('device_token'),defaultMemberId:await readMeta('default_member_id'),householdId:await readMeta('household_id')}}
   async function pair(deviceName,pairingCode){
