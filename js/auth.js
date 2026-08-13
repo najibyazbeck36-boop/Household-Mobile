@@ -44,7 +44,8 @@ export function createPairingService({postRetry=post,postPair=postOnce,readMeta=
   async function loginMember(household,loginName,credential){return postPair({action:'loginMember',household:household.trim(),loginName:loginName.trim(),credential})}
   async function recoverDevice(session,deviceId){const result=await postPair({action:'recoverDevice',sessionId:session.sessionId,sessionToken:session.sessionToken,deviceId});return installCredential(result)}
   async function registerDevice(session,deviceName){const result=await postPair({action:'registerDevice',sessionId:session.sessionId,sessionToken:session.sessionToken,deviceName:deviceName.trim(),platform:'pwa'});return installCredential(result,deviceName.trim())}
-  return{ensureDeviceId,config,pair,setDefaultMember,invalidateDeviceToken,loginMember,recoverDevice,registerDevice};
+  async function setMemberCredential(memberId,loginName,credential){const cfg=await config();const result=await postPair({action:'setMemberCredential',deviceId:cfg.deviceId,deviceToken:cfg.deviceToken,memberId,loginName:loginName.trim(),credential});await setDefaultMember(memberId);return result}
+  return{ensureDeviceId,config,pair,setDefaultMember,invalidateDeviceToken,loginMember,recoverDevice,registerDevice,setMemberCredential};
 }
 
 const service=createPairingService();
@@ -56,3 +57,4 @@ export const invalidateDeviceToken=service.invalidateDeviceToken;
 export const loginMember=service.loginMember;
 export const recoverDevice=service.recoverDevice;
 export const registerDevice=service.registerDevice;
+export const setMemberCredential=service.setMemberCredential;
