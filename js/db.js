@@ -7,5 +7,6 @@ const request=req=>new Promise((resolve,reject)=>{req.onsuccess=()=>resolve(req.
 export async function get(store,key){const db=await openDb();return request(db.transaction(store).objectStore(store).get(key))}
 export async function all(store){const db=await openDb();return request(db.transaction(store).objectStore(store).getAll())}
 export async function setMeta(key,value){return transaction(['metadata'],'readwrite',tx=>tx.objectStore('metadata').put({key,value}))}
+export async function deleteMeta(key){return transaction(['metadata'],'readwrite',tx=>tx.objectStore('metadata').delete(key))}
 export async function getMeta(key,fallback=null){return (await get('metadata',key))?.value??fallback}
 export async function bootstrapCommit(data){return transaction(STORES.filter(s=>!['outbox','conflicts'].includes(s)),'readwrite',tx=>{for(const [store,key] of [['members','members'],['accounts','accounts'],['categories','categories'],['financial_entries','financialEntries']]){const os=tx.objectStore(store);os.clear();for(const row of data[key]||[])os.put(row)}const meta=tx.objectStore('metadata');meta.put({key:'household_id',value:data.householdId});meta.put({key:'last_server_revision',value:data.currentRevision});meta.put({key:'last_sync_at',value:new Date().toISOString()});meta.put({key:'last_sync_error',value:null})})}
