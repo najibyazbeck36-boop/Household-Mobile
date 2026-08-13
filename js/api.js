@@ -1,7 +1,7 @@
 export const API_URL='https://script.google.com/macros/s/AKfycbweZL1-b_Ehiu5dAvcoupCy2NqxZsOO3slkCQS0INVGfdtKk11YJpob7dfvl1C3k3sZ/exec';
 export class ApiError extends Error{constructor(message,code='NETWORK_ERROR'){super(message);this.code=code}}
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-const trustedBridgeOrigin=origin=>{try{const url=new URL(origin);return url.protocol==='https:'&&(url.hostname==='script.google.com'||url.hostname.endsWith('.googleusercontent.com'))}catch{return false}};
+const trustedBridgeOrigin=origin=>{if(origin==='null')return true;try{const url=new URL(origin);return url.protocol==='https:'&&(url.hostname==='script.google.com'||url.hostname.endsWith('.googleusercontent.com'))}catch{return false}};
 
 async function request(payload){
   const requestId=crypto.randomUUID(),frame=document.createElement('iframe'),form=document.createElement('form');
