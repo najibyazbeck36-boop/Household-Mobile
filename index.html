@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#172238"><meta name="description" content="Offline-first Household finances">
+  <link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./css/app.css"><title>Household</title>
+</head>
+<body>
+  <aside id="install-prompt" class="install-prompt hidden" aria-label="Install Household app">
+    <img src="./icons/icon-192.png" alt="" width="44" height="44">
+    <div><strong>Install Household</strong><span>Open full screen without the browser bar.</span></div>
+    <button id="install-button" class="primary" type="button">Install App</button>
+  </aside>
+  <div id="setup" class="setup hidden"><section class="card setup-card">
+    <img src="./icons/icon.svg" alt="" width="72" height="72"><h1>Household</h1>
+    <form id="login-form"><h2>Welcome back</h2><p>Sign in to restore this phone without another pairing code.</p>
+      <label>Household<input id="household-name" required maxlength="100" value="Household" autocomplete="organization"></label>
+      <label>Member / Login<input id="login-name" required maxlength="80" autocomplete="username"></label>
+      <label>PIN / Password<input id="member-credential" required maxlength="256" type="password" autocomplete="current-password"></label>
+      <button id="login-button" class="primary" type="submit">Sign In</button>
+    </form>
+    <div id="device-choice" class="hidden"><h2>Choose a device</h2><p id="member-welcome"></p><div id="device-list" class="device-list"></div>
+      <button id="restore-button" class="primary" type="button" disabled>Restore Selected Device</button>
+      <button id="show-register-button" class="secondary" type="button">Register New Device</button>
+      <div id="register-fields" class="hidden"><label>New device name<input id="register-device-name" maxlength="100" placeholder="Najib Phone"></label><button id="register-button" class="primary" type="button">Register New Device</button></div>
+    </div>
+    <p id="recovery-error" class="error" role="alert" aria-live="polite"></p>
+    <button id="show-pairing-button" class="link-button" type="button">Use an administrative pairing code</button>
+    <form id="pair-form" class="hidden"><p>Use pairing only for initial or fallback enrollment.</p>
+    <label>Device name<input id="device-name" required maxlength="100" placeholder="Najib Phone"></label>
+    <label>Pairing code<input id="pairing-code" required maxlength="20" autocomplete="one-time-code" autocapitalize="characters" placeholder="ABCD1234"></label>
+    <button id="pair-button" class="primary" type="submit">Pair Device</button><p id="pair-error" class="error" role="alert" aria-live="polite"></p>
+    </form>
+  </section></div>
+  <div id="app" class="hidden">
+    <header><div><span class="eyebrow">Household</span><h1 id="page-title">Dashboard</h1></div><button id="sync-button" class="sync-pill">Checking…</button></header>
+    <main id="view" tabindex="-1"></main>
+    <nav aria-label="Main navigation">
+      <button data-route="home">⌂<span>Home</span></button><button data-route="activity">☷<span>Activity</span></button>
+      <button data-route="add" class="add-button">＋<span>Add</span></button><button data-route="accounts">▣<span>Accounts</span></button>
+      <button data-route="more">•••<span>More</span></button>
+    </nav>
+  </div>
+  <div id="toast" class="toast hidden" role="status"></div>
+  <script type="module" src="./js/app.js?v=14"></script>
+</body></html>
