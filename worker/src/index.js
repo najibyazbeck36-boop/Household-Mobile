@@ -19,6 +19,14 @@ function jsonResponse(payload, status, origin) {
   });
 }
 
+async function readJsonResponse(response) {
+  if (!response.ok) throw new Error(`upstream_status_${response.status}`);
+  const responseBody = await response.arrayBuffer();
+  if (responseBody.byteLength > MAX_BODY_BYTES) throw new Error('upstream_response_too_large');
+  JSON.parse(new TextDecoder().decode(responseBody));
+  return responseBody;
+}
+
 export default {
   async fetch(request, env) {
     const origin = request.headers.get('Origin') || '';
@@ -39,16 +47,24 @@ export default {
     if (body.byteLength > MAX_BODY_BYTES) return jsonResponse({ ok: false, error: { code: 'REQUEST_TOO_LARGE', message: 'Request is too large.' } }, 413, origin);
 
     try {
-      const upstream = await fetch(env.APPS_SCRIPT_URL, {
+      const initial = await fetch(env.APPS_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body,
-        redirect: 'follow'
+        redirect: 'manual'
       });
-      if (!upstream.ok) throw new Error('Upstream request failed.');
-      const responseBody = await upstream.arrayBuffer();
-      if (responseBody.byteLength > MAX_BODY_BYTES) throw new Error('Upstream response is too large.');
-      JSON.parse(new TextDecoder().decode(responseBody));
+      let final = initial;
+      if (initial.status >= 300 && initial.status < 400) {
+        const location = initial.headers.get('Location');
+        if (!location) throw new Error('upstream_redirect_missing');
+        const redirectUrl = new URL(location);
+        if (redirectUrl.protocol !== 'https:' || redirectUrl.hostname !== 'script.googleusercontent.com') {
+          throw new Error('upstream_redirect_rejected');
+        }
+        final = await fetch(redirectUrl, { method: 'GET', redirect: 'manual' });
+        if (final.status >= 300 && final.status < 400) throw new Error('upstream_extra_redirect_rejected');
+      }
+      const responseBody = await readJsonResponse(final);
       return new Response(responseBody, {
         status: 200,
         headers: { ...corsHeaders(origin), 'Content-Type': 'application/json; charset=utf-8' }
