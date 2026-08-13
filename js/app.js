@@ -12,7 +12,7 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>navigate(b.data
 pairForm.onsubmit=async event=>{
   event.preventDefault();if(pairingInFlight)return;pairingInFlight=true;
   const continuing=Boolean(await getMeta('device_token'));pairError.classList.add('pairing-status');pairError.textContent=continuing?'Loading household data…':'Pairing securely… This may take up to a minute.';pairButton.disabled=true;pairButton.textContent=continuing?'Loading…':'Pairing…';
-  try{await pair(document.querySelector('#device-name').value,document.querySelector('#pairing-code').value);pairError.textContent='Paired. Loading household data…';setup.classList.add('hidden');app.classList.remove('hidden');await navigate('home');startAutoSync()}
+  try{await pair(document.querySelector('#device-name').value,document.querySelector('#pairing-code').value);document.querySelector('#pairing-code').value='';pairError.textContent='Paired. Loading household data…';setup.classList.add('hidden');app.classList.remove('hidden');await navigate('home');startAutoSync()}
   catch(error){pairError.classList.remove('pairing-status');pairError.textContent=error.code==='INVALID_PAIRING_CODE'?'That pairing code is invalid, expired, or already used. Generate a new code.':error.code==='DEVICE_EXISTS'?'The previous device identity was rejected. Submit the pairing code again to use a fresh identity.':error.message}
   finally{pairingInFlight=false;pairButton.disabled=false;pairButton.textContent=await getMeta('device_token')?'Continue Setup':'Pair Device'}
 };
