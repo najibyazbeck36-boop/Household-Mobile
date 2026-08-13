@@ -17,7 +17,7 @@ pairForm.onsubmit=async event=>{
   finally{pairingInFlight=false;pairButton.disabled=false;pairButton.textContent=await getMeta('device_token')?'Continue Setup':'Pair Device'}
 };
 async function init(){
-  if('serviceWorker'in navigator){const registration=await navigator.serviceWorker.register('./service-worker.js');registration.update().catch(()=>{});navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!sessionStorage.getItem('household-sw-v5')){sessionStorage.setItem('household-sw-v5','1');location.reload()}})}
+  if('serviceWorker'in navigator){const registration=await navigator.serviceWorker.register('./service-worker.js');registration.update().catch(()=>{});navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!sessionStorage.getItem('household-sw-v6')){sessionStorage.setItem('household-sw-v6','1');location.reload()}})}
   if(await getMeta('device_token')&&await getMeta('household_id')){app.classList.remove('hidden');await navigate('home');startAutoSync();syncNow().then(()=>navigate(route)).catch(error=>{if(error.code==='INVALID_DEVICE')showPairing('This device authorization is no longer valid. Enter a fresh pairing code.');else updateStatus()})}
   else{setup.classList.remove('hidden');if(await getMeta('device_token')){pairButton.textContent='Continue Setup';pairError.textContent='Pairing was accepted. Continue loading your household.';document.querySelector('#pairing-code').required=false}}
 }
