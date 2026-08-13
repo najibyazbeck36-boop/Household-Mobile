@@ -35,7 +35,16 @@ export function createPairingService({postRetry=post,postPair=postOnce,readMeta=
     }
   }
   async function setDefaultMember(id){await writeMeta('default_member_id',id||null)}
-  return{ensureDeviceId,config,pair,setDefaultMember,invalidateDeviceToken};
+  async function installCredential(result,deviceName){
+    await writeMeta('device_id',result.deviceId);await writeMeta('device_token',result.deviceToken);
+    if(deviceName)await writeMeta('device_name',deviceName);if(result.memberId)await writeMeta('default_member_id',result.memberId);
+    try{const snapshot=await postRetry({action:'bootstrap',deviceId:result.deviceId,deviceToken:result.deviceToken});await commitBootstrap(snapshot);return snapshot}
+    catch(error){if(error.code==='INVALID_DEVICE')await invalidateDeviceToken();throw error}
+  }
+  async function loginMember(household,loginName,credential){return postPair({action:'loginMember',household:household.trim(),loginName:loginName.trim(),credential})}
+  async function recoverDevice(session,deviceId){const result=await postPair({action:'recoverDevice',sessionId:session.sessionId,sessionToken:session.sessionToken,deviceId});return installCredential(result)}
+  async function registerDevice(session,deviceName){const result=await postPair({action:'registerDevice',sessionId:session.sessionId,sessionToken:session.sessionToken,deviceName:deviceName.trim(),platform:'pwa'});return installCredential(result,deviceName.trim())}
+  return{ensureDeviceId,config,pair,setDefaultMember,invalidateDeviceToken,loginMember,recoverDevice,registerDevice};
 }
 
 const service=createPairingService();
@@ -44,3 +53,6 @@ export const config=service.config;
 export const pair=service.pair;
 export const setDefaultMember=service.setDefaultMember;
 export const invalidateDeviceToken=service.invalidateDeviceToken;
+export const loginMember=service.loginMember;
+export const recoverDevice=service.recoverDevice;
+export const registerDevice=service.registerDevice;
