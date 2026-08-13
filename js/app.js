@@ -23,7 +23,7 @@ pairForm.onsubmit=async event=>{
 };
 async function init(){
   updateInstallPrompt();
-  if('serviceWorker'in navigator){const registration=await navigator.serviceWorker.register('./service-worker.js');registration.update().catch(()=>{});navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!sessionStorage.getItem('household-sw-v12')){sessionStorage.setItem('household-sw-v12','1');location.reload()}})}
+  if('serviceWorker'in navigator){const registration=await navigator.serviceWorker.register('./service-worker.js');registration.update().catch(()=>{});navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!sessionStorage.getItem('household-sw-v13')){sessionStorage.setItem('household-sw-v13','1');location.reload()}})}
   if(await getMeta('device_token')&&await getMeta('household_id')){app.classList.remove('hidden');await navigate('home');startAutoSync();syncNow().then(()=>navigate(route)).catch(error=>{if(error.code==='INVALID_DEVICE')showPairing('This device authorization is no longer valid. Enter a fresh pairing code.');else updateStatus()})}
   else{setup.classList.remove('hidden');if(await getMeta('device_token')){pairButton.textContent='Continue Setup';pairError.textContent='Pairing was accepted. Continue loading your household.';document.querySelector('#pairing-code').required=false}}
 }
