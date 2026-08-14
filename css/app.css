@@ -126,6 +126,14 @@ textarea { min-height: 88px; resize: vertical; }
 .device-option small { display: block; margin-top: 3px; color: var(--color-text-secondary); }
 #register-fields { margin-top: 12px; }
 .toast { position: fixed; right: 16px; bottom: calc(84px + env(safe-area-inset-bottom)); left: 16px; z-index: 10; max-width: 620px; margin: auto; padding: 13px; border-radius: var(--radius-control); background: #16202d; color: #fff; box-shadow: var(--shadow-card); }
+.update-banner { position: fixed; right: 12px; bottom: calc(84px + env(safe-area-inset-bottom)); left: 12px; z-index: 22; display: flex; align-items: center; gap: 10px; max-width: 650px; margin: auto; padding: 11px 12px; border: 1px solid #9fc1ec; border-radius: var(--radius-control); background: #eef5ff; color: var(--color-text); box-shadow: var(--shadow-card); font-size: .78rem; }
+.update-banner span { flex: 1; }
+.update-banner .secondary { width: auto; min-height: 38px; padding: 8px 12px; }
+.diagnostics { margin: 0; }
+.diagnostics div { display: grid; grid-template-columns: minmax(110px,.8fr) minmax(0,1.2fr); gap: 12px; padding: 8px 0; border-bottom: 1px solid #edf2f7; }
+.diagnostics div:last-child { border-bottom: 0; }
+.diagnostics dt { color: var(--color-text-secondary); }
+.diagnostics dd { margin: 0; overflow-wrap: anywhere; text-align: right; font-weight: 600; }
 .install-prompt { position: fixed; right: 12px; bottom: calc(78px + env(safe-area-inset-bottom)); left: 12px; z-index: 20; display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 11px; max-width: 650px; margin: auto; padding: 11px 12px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-card); background: #fff; box-shadow: var(--shadow-card); }
 .install-prompt img { border-radius: 10px; }
 .install-prompt strong, .install-prompt span { display: block; }
