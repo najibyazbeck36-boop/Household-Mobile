@@ -1,4 +1,4 @@
-const APP_VERSION='21';
+const APP_VERSION='22';
 const CACHE_PREFIX='household-mobile-v';
 const CACHE_NAME=`${CACHE_PREFIX}${APP_VERSION}`;
 const SHELL=['./','./index.html','./version.json','./manifest.webmanifest','./css/app.css','./icons/icon.svg','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-maskable-192.png','./icons/icon-maskable-512.png','./js/version.js','./js/update.js','./js/app.js','./js/api.js','./js/auth.js','./js/db.js','./js/sync.js','./js/models.js','./js/views.js'];
