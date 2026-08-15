@@ -27,10 +27,10 @@ async function workerHarness(){
 
 async function dispatchWait(handler,event={}){let promise;handler({...event,waitUntil:value=>{promise=Promise.resolve(value)}});await promise}
 
-test('v20 to v21 installs a complete shell and activates immediately',async()=>{
+test('v21 to v22 installs a complete shell and activates immediately',async()=>{
   const worker=await workerHarness();
   await dispatchWait(worker.listeners.install);
-  const shell=worker.stores.get('household-mobile-v21');
+  const shell=worker.stores.get('household-mobile-v22');
   assert.ok(shell?.has('/Household-Mobile/index.html'));
   assert.ok(shell?.has('/Household-Mobile/js/app.js'));
   assert.ok(shell?.has('/Household-Mobile/js/sync.js'));
@@ -53,10 +53,10 @@ test('worker update preserves IndexedDB financial data, outbox, auth, and revisi
   assert.equal(await getMeta('last_server_revision'),63);
 });
 
-test('version handshake reports v21 without sensitive state',async()=>{
+test('version handshake reports v22 without sensitive state',async()=>{
   const worker=await workerHarness();let reply;
   worker.listeners.message({data:{type:'GET_VERSION'},ports:[{postMessage:value=>{reply=value}}]});
-  assert.deepEqual({...reply},{type:'HOUSEHOLD_SW_VERSION',version:'21',cache:'household-mobile-v21'});
+  assert.deepEqual({...reply},{type:'HOUSEHOLD_SW_VERSION',version:'22',cache:'household-mobile-v22'});
   assert.equal(JSON.stringify(reply).includes('token'),false);
 });
 
@@ -80,8 +80,8 @@ test('reload coordination is loop-guarded and waits for active synchronization',
 
 test('frontend, worker, deployed app, and cloud versions are observable',async()=>{
   const version=await readFile(new URL('js/version.js',root),'utf8'),app=await readFile(new URL('js/app.js',root),'utf8');
-  assert.match(version,/FRONTEND_VERSION='21'/);
-  assert.match(version,/CLOUD_DEPLOYMENT_VERSION='13'/);
+  assert.match(version,/FRONTEND_VERSION='22'/);
+  assert.match(version,/CLOUD_DEPLOYMENT_VERSION='14'/);
   assert.match(app,/Service worker/);assert.match(app,/Latest deployed/);assert.match(app,/Device identity/);
   assert.match(app,/row\('Device identity',authenticated\?'Present':'Not configured'\)/);
   assert.doesNotMatch(app,/row\('Device token'/);
